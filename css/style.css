@@ -30,6 +30,7 @@ ul{
 }
 .nav-links ul li{
     padding-left: 50px;
+    cursor: pointer;
 }
 .nav-item.active{
     color: rgb(255, 255, 255);
