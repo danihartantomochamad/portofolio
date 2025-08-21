@@ -8,7 +8,7 @@ document.getElementById('secret-form').addEventListener('submit', async (e) => {
 
     try {
         // Mengubah URL ke endpoint server proxy Anda
-        const response = await fetch('http://localhost:3000/api/conceal', {
+        const response = await fetch('https://eu.onetimesecret.com/api/v2/secret/conceal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
