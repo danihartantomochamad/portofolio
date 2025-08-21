@@ -7,19 +7,17 @@ document.getElementById('secret-form').addEventListener('submit', async (e) => {
     resultDiv.innerHTML = 'Memproses...';
 
     try {
-        const response = await fetch('https://eu.onetimesecret.com/api/v2/secret/conceal', {
+        // Mengubah URL ke endpoint server proxy Anda
+        const response = await fetch('http://localhost:3000/api/conceal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // API One-Time Secret menggunakan otentikasi. 
-                // Anda mungkin perlu menambahkan header 'Authorization'
-                // dengan token API Anda jika diperlukan.
             },
             body: JSON.stringify({ secret: secretText })
         });
 
         if (!response.ok) {
-            throw new Error('Terjadi kesalahan saat menghubungi API.');
+            throw new Error('Terjadi kesalahan saat menghubungi server proxy.');
         }
 
         const data = await response.json();
