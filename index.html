@@ -1,23 +1,226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Time Secret</title>
-    <link rel="stylesheet" href="css/secret-style.css">
+    <title>Form Input Spreadsheet</title>
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter untuk tampilan yang lebih modern */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style tambahan untuk transisi yang lebih halus */
+        .data-row {
+            transition: all 0.3s ease-in-out;
+            opacity: 1;
+        }
+        .data-row.removing {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        /* Style untuk tombol saat loading atau disabled */
+        .disabled-btn {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .loading-btn::after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.4s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+        }
+    </style>
+    <!-- Memuat font Inter dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1>Sembunyikan Rahasia Anda</h1>
-        <form id="secret-form">
-            <div class="form-group">
-                <label for="secret">Masukkan rahasia:</label>
-                <textarea id="secret" name="secret" rows="4" required></textarea>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-slate-800">Form Input Data</h1>
+            <p class="text-slate-500 mt-2">Kirim data baris per baris ke Google Sheets.</p>
+        </div>
+
+        <!-- Kontainer Spreadsheet -->
+        <div class="overflow-x-auto">
+            <div id="spreadsheet-container" class="space-y-2">
+                <!-- Header Tabel (Hanya tampil di layar besar) -->
+                <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
+                    <div class="col-span-2">Tanggal</div>
+                    <div class="col-span-3">Nama Item</div>
+                    <div class="col-span-2">Kategori</div>
+                    <div class="col-span-2">Jumlah</div>
+                    <div class="col-span-2">Harga (Rp)</div>
+                    <div class="col-span-1 text-center">Aksi</div>
+                </div>
+                
+                <div id="data-rows-container" class="space-y-4"></div>
             </div>
-            <button type="submit">Sembunyikan Rahasia</button>
-        </form>
-        <div id="result" class="result"></div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+            <button id="addRowBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                Tambah Baris
+            </button>
+            <button id="submitBtn" class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">
+                Kirim ke Google Sheets
+            </button>
+        </div>
+
+        <!-- Area Notifikasi Pengiriman -->
+        <div id="notification" class="mt-4 text-center text-sm font-medium"></div>
     </div>
-    <script src="js/secret-script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzHvcgUFXNMCnn2uIH7ffGJVslmnve1ODyWL2CzfF7NvrpO8Ejre4o7qvMLhmA1cGc/exec';
+
+            const dataRowsContainer = document.getElementById('data-rows-container');
+            const addRowBtn = document.getElementById('addRowBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const notification = document.getElementById('notification');
+
+            // Fungsi untuk membuat baris baru yang responsif
+            const createRowImpl = () => {
+                const rowId = `row-${Date.now()}`;
+                const rowDiv = document.createElement('div');
+                rowDiv.id = rowId;
+                // Tata letak mobile: border, padding. Tata letak web: grid.
+                rowDiv.className = 'data-row border rounded-lg p-4 md:p-0 md:border-none md:grid md:grid-cols-12 md:gap-4 md:items-center';
+                
+                // PENTING: nama 'name' pada input harus sama persis dengan header di Google Sheet
+                rowDiv.innerHTML = `
+                    <!-- Wrapper untuk setiap field agar bisa diberi label di mobile -->
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Tanggal</label>
+                        <input type="date" name="Tanggal" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    </div>
+
+                    <div class="mt-4 md:mt-0 md:col-span-3">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Nama Item</label>
+                        <input type="text" name="Nama" placeholder="e.g., Kopi Susu" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    </div>
+
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
+                        <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition bg-white appearance-none">
+                            <option value="">Pilih Kategori</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Minuman">Minuman</option>
+                            <option value="Kondangan">Kondangan</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Hiburan">Hiburan</option>
+                            <option value="Barang">Barang</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
+                        <input type="number" name="Jumlah" placeholder="e.g., 10" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    </div>
+
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Harga (Rp)</label>
+                        <input type="number" name="Harga" placeholder="e.g., 18000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    </div>
+                    
+                    <div class="mt-4 md:mt-0 md:col-span-1 flex justify-end md:justify-center">
+                        <button class="removeRowBtn text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-100 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                `;
+                dataRowsContainer.appendChild(rowDiv);
+                rowDiv.querySelector('.removeRowBtn').addEventListener('click', () => removeRowImpl(rowId));
+            };
+
+            const removeRowImpl = (rowId) => {
+                const rowToRemove = document.getElementById(rowId);
+                if (rowToRemove) {
+                    rowToRemove.classList.add('removing');
+                    setTimeout(() => rowToRemove.remove(), 300);
+                }
+            };
+            
+            addRowBtn.addEventListener('click', createRowImpl);
+
+            submitBtn.addEventListener('click', async () => {
+                const allRows = dataRowsContainer.querySelectorAll('.data-row');
+                const validRows = [];
+
+                allRows.forEach(row => {
+                    const fields = row.querySelectorAll('input, select');
+                    let hasValue = false;
+                    fields.forEach(field => {
+                        if (field.value.trim() !== '') hasValue = true;
+                    });
+                    if (hasValue) validRows.push(row);
+                });
+
+                if (validRows.length === 0) {
+                    notification.textContent = 'Tidak ada data untuk dikirim.';
+                    notification.className = 'mt-4 text-center text-sm font-medium text-yellow-600';
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading-btn');
+                submitBtn.textContent = 'Mengirim';
+                notification.className = 'mt-4 text-center text-sm font-medium text-slate-600';
+
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (const row of validRows) {
+                    notification.textContent = `Mengirim baris ${successCount + errorCount + 1} dari ${validRows.length}...`;
+                    const formData = new FormData();
+                    row.querySelectorAll('input, select').forEach(field => {
+                        formData.append(field.name, field.value);
+                    });
+
+                    try {
+                        const response = await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: formData,
+                        });
+                        const result = await response.json();
+                        if (result.result !== 'success') throw new Error(result.error);
+                        successCount++;
+                    } catch (error) {
+                        console.error('Submit Error:', error);
+                        errorCount++;
+                    }
+                }
+
+                if (errorCount > 0) {
+                    notification.textContent = `Selesai. ${successCount} baris berhasil dikirim, ${errorCount} baris gagal. Cek console untuk detail error.`;
+                    notification.className = 'mt-4 text-center text-sm font-medium text-red-600';
+                } else {
+                    notification.textContent = `✓ Semua ${successCount} baris berhasil dikirim!`;
+                    notification.className = 'mt-4 text-center text-sm font-medium text-green-600';
+                    dataRowsContainer.innerHTML = '';
+                    createRowImpl();
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading-btn');
+                submitBtn.textContent = 'Kirim ke Google Sheets';
+            });
+            
+            createRowImpl();
+        });
+    </script>
 </body>
 </html>
