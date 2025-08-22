@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Total Harga</title>
+    <title>Laporan Total Pengeluaran</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,17 +24,30 @@
         }
     </style>
 </head>
-<body class="bg-slate-100">
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="container mx-auto max-w-2xl p-4 md:p-8">
-        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+    <div class="container mx-auto max-w-12xl p-4 md:p-8">
+        <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        <a href="./index.html"  class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition"><- Home</a>
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-slate-800">Laporan Periodik</h1>
-                <p class="text-slate-500 mt-2">Menampilkan total harga dari Google Sheet.</p>
+                <h1 class="text-3xl font-bold text-slate-800">Laporan Pengeluaran Periodik</h1>
+                <p class="text-slate-500 mt-2">Pilih rentang tanggal untuk melihat total harga.</p>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-slate-700 mb-1">Tanggal Mulai</label>
+                    <input type="date" id="startDate" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                </div>
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-slate-700 mb-1">Tanggal Akhir</label>
+                    <input type="date" id="endDate" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                </div>
             </div>
 
             <button id="fetchTotalBtn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition flex items-center justify-center gap-2">
-                Dapatkan Total Harga Terbaru
+                Tampilkan Total Harga
             </button>
 
             <!-- Result Section -->
@@ -57,16 +70,28 @@
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6eYn5vYs-pVGlbRw_jxwICxhkR7u17Re6CWdQ3EDisd9nOO8s9PN88vXBPkV1N-U/exec';
 
             const fetchTotalBtn = document.getElementById('fetchTotalBtn');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
             const resultContainer = document.getElementById('resultContainer');
             const totalHargaEl = document.getElementById('totalHarga');
             const dateRangeEl = document.getElementById('dateRange');
             const notification = document.getElementById('notification');
 
             const fetchData = () => {
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+
+                if (!startDate || !endDate) {
+                    showNotification('Harap pilih tanggal mulai dan tanggal akhir.', 'red');
+                    return;
+                }
+
                 showLoading(true);
                 resultContainer.classList.add('hidden');
+                
+                const url = `${SCRIPT_URL}?startDate=${startDate}&endDate=${endDate}`;
 
-                fetch(SCRIPT_URL)
+                fetch(url)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Respons jaringan bermasalah.');
@@ -76,7 +101,7 @@
                     .then(data => {
                         showLoading(false);
                         if (data.result === 'success') {
-                            displayResult(data.totalHarga, data.startDate, data.endDate);
+                            displayResult(data.totalHarga, startDate, endDate);
                         } else {
                             throw new Error(data.error || 'Terjadi error pada skrip.');
                         }
@@ -109,7 +134,7 @@
                     notification.textContent = '';
                 } else {
                     fetchTotalBtn.disabled = false;
-                    fetchTotalBtn.innerHTML = 'Dapatkan Total Harga Terbaru';
+                    fetchTotalBtn.innerHTML = 'Tampilkan Total Harga';
                 }
             }
 
@@ -120,12 +145,8 @@
 
             function formatDate(dateString) {
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                // PERBAIKAN: Mengganti toLocaleDateDateString menjadi toLocaleDateString
                 return new Date(dateString).toLocaleDateString('id-ID', options);
             }
-
-            // Langsung panggil data saat halaman pertama kali dimuat
-            fetchData();
         });
     </script>
 </body>
