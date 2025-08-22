@@ -18,9 +18,28 @@
     <script src="https://unpkg.com/feather-icons"></script>
 
     <style>
-        /* Menggunakan font Inter sebagai default */
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        .data-row { transition: all 0.3s ease-in-out; opacity: 1; }
+        .data-row.removing { opacity: 0; transform: scale(0.95); }
+        .disabled-btn { cursor: not-allowed; opacity: 0.6; }
+        .loading-btn::after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.4s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+        }
+        textarea {
+            min-height: 42px;
+            resize: vertical;
+        }
+        /* Style untuk menandai input yang error */
+        .input-error {
+            border-color: #ef4444; /* red-500 */
+            box-shadow: 0 0 0 1px #ef4444;
         }
     </style>
 </head>
@@ -78,14 +97,14 @@
                     <div id="spreadsheet-container" class="space-y-2">
                         <!-- Header Tabel (Hanya tampil di layar besar) -->
                         <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
-                            <div class="col-span-2">Tanggal</div>
+                            <div class="col-span-2">Tanggal Transaksi</div>
                             <div class="col-span-2">Nama Item</div>
                             <div class="col-span-2">Kategori</div>
                             <div class="col-span-1">Jumlah</div>
                             <div class="col-span-2">Harga</div>
                             <div class="col-span-2">CreatedBy</div>
                             <!-- <div class="col-span-2">Catatan</div> -->
-                            <div class="col-span-1 text-center">Aksi</div>
+                            <div class="col-span-1 text-center">Remove</div>
                         </div>
                         
                         <div id="data-rows-container" class="space-y-4"></div>
@@ -96,7 +115,7 @@
                 <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
                     <button id="addRowBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-transform transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                        Tambah Baris
+                        Tambah Form
                     </button>
                     <button id="submitBtn" class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">
                         Kirim ke Google Sheets
@@ -163,22 +182,22 @@
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Nama Item</label>
-                        <input type="text" name="Nama" placeholder="Ex: Makan Siang" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                        <input type="text" name="Nama" placeholder="Ex: Makan Siang" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400" required>
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
                         <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
+                            <option value="Lainnya">Lainnya</option>
                             <option value="Makanan">Makanan</option>
                             <option value="Minuman">Minuman</option>
                             <option value="Investasi">Kondangan, Utang/Pinjaman, Investasi</option>
                             <option value="Hiburan">Hiburan</option>
                             <option value="Sedekah">Sedekah</option>
-                            <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-1">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
-                        <input type="number" name="Jumlah" placeholder="1" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                        <input type="number" name="Jumlah" placeholder="00" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Harga</label>
@@ -188,10 +207,10 @@
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">CreatedBy</label>
                         <select name="CreatedBy" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
+                            <option value="Lainnya">Lainnya</option>
                             <option value="All">All</option>
                             <option value="Dani">Dani</option>
                             <option value="Diana">Diana</option>
-                            <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
                     
@@ -217,14 +236,56 @@
             submitBtn.addEventListener('click', async () => {
                 const allRows = dataRowsContainer.querySelectorAll('.data-row');
                 const validRows = [];
+                let isFormValid = true;
+
+                // 1. Reset semua status error sebelumnya
                 allRows.forEach(row => {
-                    let hasValue = false;
-                    // PERBAIKAN: Menambahkan 'textarea' ke dalam selector
                     row.querySelectorAll('input, select, textarea').forEach(field => {
-                        if (field.value.trim() !== '') hasValue = true;
+                        field.classList.remove('input-error');
                     });
-                    if (hasValue) validRows.push(row);
                 });
+
+                // 2. Validasi setiap baris
+                for (const row of allRows) {
+                    const fields = row.querySelectorAll('input, select, textarea');
+                    let isRowEmpty = true;
+                    fields.forEach(field => {
+                        if (field.value.trim() !== '') isRowEmpty = false;
+                    });
+
+                    if (isRowEmpty) continue; // Lewati baris yang benar-benar kosong
+
+                    const tanggalInput = row.querySelector('input[name="Tanggal"]');
+                    const namaProdukInput = row.querySelector('input[name="Nama"]');
+                    const hargaInput = row.querySelector('input[name="Harga"]');
+                    let isRowValid = true;
+
+                    if (!tanggalInput.value.trim()) {
+                        tanggalInput.classList.add('input-error');
+                        isRowValid = false;
+                    }
+                    if (!namaProdukInput.value.trim()) {
+                        namaProdukInput.classList.add('input-error');
+                        isRowValid = false;
+                    }
+                    if (!hargaInput.value.trim()) {
+                        hargaInput.classList.add('input-error');
+                        isRowValid = false;
+                    }
+
+                    if (isRowValid) {
+                        validRows.push(row);
+                    } else {
+                        isFormValid = false; // Jika ada satu baris saja yang tidak valid, form dianggap tidak valid
+                    }
+                }
+
+                // 3. Jika form tidak valid, tampilkan notifikasi dan hentikan proses
+                if (!isFormValid) {
+                    notification.textContent = 'Form Kosong. Harap isi kolom wajib yang ditandai merah.';
+                    notification.className = 'mt-4 text-center text-sm font-medium text-red-600';
+                    return;
+                }
 
                 if (validRows.length === 0) {
                     notification.textContent = 'Tidak ada data untuk dikirim.';
@@ -232,6 +293,7 @@
                     return;
                 }
 
+                // 4. Lanjutkan proses pengiriman jika semua valid
                 submitBtn.disabled = true;
                 submitBtn.classList.add('loading-btn');
                 submitBtn.textContent = 'Mengirim';
@@ -243,7 +305,6 @@
                 for (const row of validRows) {
                     notification.textContent = `Mengirim baris ${successCount + errorCount + 1} dari ${validRows.length}...`;
                     const formData = new FormData();
-                    // PERBAIKAN: Menambahkan 'textarea' ke dalam selector
                     row.querySelectorAll('input, select, textarea').forEach(field => {
                         formData.append(field.name, field.value);
                     });
