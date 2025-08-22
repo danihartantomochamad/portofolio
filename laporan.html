@@ -86,13 +86,13 @@
                 </div>
 
                 <button id="fetchTotalBtn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition flex items-center justify-center gap-2">
-                    Tampilkan Total Harga
+                    Tampilkan Total Pengeluaran
                 </button>
 
                 <!-- Result Section -->
                 <div id="resultContainer" class="mt-8 text-center hidden">
                     <div class="bg-slate-50 p-6 rounded-lg">
-                        <p class="text-slate-600 text-lg">Total Harga</p>
+                        <p class="text-slate-600 text-lg">Total Pengeluaran</p>
                         <h2 id="totalHarga" class="text-4xl font-bold text-slate-800 mt-2"></h2>
                         <p id="dateRange" class="text-slate-500 text-sm mt-1"></p>
                     </div>
@@ -206,7 +206,7 @@
                     notification.textContent = '';
                 } else {
                     fetchTotalBtn.disabled = false;
-                    fetchTotalBtn.innerHTML = 'Tampilkan Total Harga';
+                    fetchTotalBtn.innerHTML = 'Tampilkan Total Pengeluaran';
                 }
             }
 
