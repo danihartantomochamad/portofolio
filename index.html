@@ -3,221 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Input Spreadsheet</title>
-    <!-- Memuat Tailwind CSS untuk styling -->
+    <title>Dani Hartanto</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Menggunakan font Inter untuk tampilan yang lebih modern */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Style tambahan untuk transisi yang lebih halus */
-        .data-row {
-            transition: all 0.3s ease-in-out;
-            opacity: 1;
-        }
-        .data-row.removing {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        /* Style untuk tombol saat loading atau disabled */
-        .disabled-btn {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .loading-btn::after {
-            content: '...';
-            display: inline-block;
-            animation: dots 1.4s infinite;
-        }
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-        }
-    </style>
-    <!-- Memuat font Inter dari Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
-
-    <div class="container mx-auto max-w-12xl p-4 md:p-8">
-        <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-            <a href="laporan.html"  class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">Laporan Bulanan -></a>
-            <div class="mb-6 text-center">
-                <h1 class="text-3xl font-bold text-slate-800">Form Input Data Pengeluaran</h1>
-                <p class="text-slate-500 mt-2">Kirim data baris per baris ke Google Sheets.</p>
-            </div>
     
-            <!-- Kontainer Spreadsheet -->
-            <div class="overflow-x-auto">
-                <div id="spreadsheet-container" class="space-y-2">
-                    <!-- Header Tabel (Hanya tampil di layar besar) -->
-                    <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
-                        <div class="col-span-2">Tanggal</div>
-                        <div class="col-span-3">Nama Item</div>
-                        <div class="col-span-2">Kategori</div>
-                        <div class="col-span-2">Jumlah</div>
-                        <div class="col-span-2">Harga (Rp)</div>
-                        <div class="col-span-1 text-center">Aksi</div>
-                    </div>
-                    
-                    <div id="data-rows-container" class="space-y-4"></div>
+    <!-- Feather Icons for hamburger menu -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        /* Menggunakan font Inter sebagai default */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- =========== Navbar =========== -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo atau Brand -->
+                <div class="text-2xl font-bold text-indigo-600">
+                    <a href="./index.html">Hello, Dani <i class="fa-brands fa-gratipay"></i>
+                    </a>
+                </div>
+
+                <!-- Menu untuk Desktop -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="./index.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Beranda</a>
+                    <a href="./form.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Form</a>
+                    <a href="./laporan.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Report</a>
+                    <a href="./tentang.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Tentang</a>
+                    <!-- <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">Daftar</a> -->
+                </div>
+
+                <!-- Tombol Hamburger untuk Mobile -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+                        <i data-feather="menu" class="h-6 w-6"></i>
+                    </button>
                 </div>
             </div>
-    
-            <!-- Tombol Aksi -->
-            <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-                <button id="addRowBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-transform transform hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                    Tambah Baris
-                </button>
-                <button id="submitBtn" class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">
-                    Kirim ke Google Sheets
-                </button>
+
+            <!-- Menu untuk Mobile (disembunyikan secara default) -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4">
+                <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Beranda</a>
+                <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Tentang</a>
+                <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Layanan</a>
+                <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Kontak</a>
+                <a href="#" class="block mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-center hover:bg-indigo-700 transition duration-300">Daftar</a>
             </div>
-    
-            <!-- Area Notifikasi Pengiriman -->
-            <div id="notification" class="mt-4 text-center text-sm font-medium"></div>
+        </nav>
+    </header>
+
+    <!-- =========== Content =========== -->
+    <main class="flex-grow container mx-auto px-6 py-12">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Welcome, I Am Web Developer</h1>
+            <p class="text-gray-600 mb-6 text-center">What I Do: Creating, Developing, Beautifying, and Troubleshooting Websites.</p>
+            
+            <div class="w-full h-56 bg-indigo-200 rounded-lg mb-8 flex items-center justify-center">
+                 <img src="./images/gambar_landing.jpeg" alt="Placeholder Gambar Hero" class="rounded-lg object-cover w-full h-full">
+            </div>
+
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Tentang Konten Ini</h2>
+            <p class="mb-4">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+            <p class="mb-4">
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="font-semibold text-lg mb-2">Catatan Keuangan</h3>
+                    
+                    <a href="./form.html" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-yellow-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Buka Formulir Catatan Keuangan</h5>
+                        <!-- <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> -->
+                    </a>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="font-semibold text-lg mb-2">Laporan Keuangan</h3>
+                    <a href="./laporan.html" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-green-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Lihat Laporan Keuanganmu Disini</h5>
+                        <!-- <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> -->
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <!-- =========== Footer =========== -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400">&copy; 2025 DaniHartanto. Semua Hak Cipta Dilindungi.</p>
+                <div class="flex mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i data-feather="facebook" class="h-5 w-5"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i data-feather="twitter" class="h-5 w-5"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i data-feather="instagram" class="h-5 w-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6eYn5vYs-pVGlbRw_jxwICxhkR7u17Re6CWdQ3EDisd9nOO8s9PN88vXBPkV1N-U/exec';
+        // Inisialisasi Feather Icons
+        feather.replace();
 
-            const dataRowsContainer = document.getElementById('data-rows-container');
-            const addRowBtn = document.getElementById('addRowBtn');
-            const submitBtn = document.getElementById('submitBtn');
-            const notification = document.getElementById('notification');
+        // Logika untuk toggle menu mobile
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-            // Fungsi untuk membuat baris baru yang responsif
-            const createRowImpl = () => {
-                const rowId = `row-${Date.now()}`;
-                const rowDiv = document.createElement('div');
-                rowDiv.id = rowId;
-                // Tata letak mobile: border, padding. Tata letak web: grid.
-                rowDiv.className = 'data-row border rounded-lg p-4 md:p-0 md:border-none md:grid md:grid-cols-12 md:gap-4 md:items-center';
-                
-                // PENTING: nama 'name' pada input harus sama persis dengan header di Google Sheet
-                rowDiv.innerHTML = `
-                    <!-- Wrapper untuk setiap field agar bisa diberi label di mobile -->
-                    <div class="md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Tanggal</label>
-                        <input type="date" name="Tanggal" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-3">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Nama Item</label>
-                        <input type="text" name="Nama" placeholder="e.g., Kopi Susu" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
-                        <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition bg-white appearance-none">
-                            <option value="">Pilih Kategori</option>
-                            <option value="Makanan">Makanan</option>
-                            <option value="Minuman">Minuman</option>
-                            <option value="Kondangan">Kondangan</option>
-                        </select>
-                    </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
-                        <input type="number" name="Jumlah" placeholder="e.g., 10" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Harga (Rp)</label>
-                        <input type="number" name="Harga" placeholder="e.g., 18000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
-                    
-                    <div class="mt-4 md:mt-0 md:col-span-1 flex justify-end md:justify-center">
-                        <button class="removeRowBtn text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-100 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                        </button>
-                    </div>
-                `;
-                dataRowsContainer.appendChild(rowDiv);
-                rowDiv.querySelector('.removeRowBtn').addEventListener('click', () => removeRowImpl(rowId));
-            };
-
-            const removeRowImpl = (rowId) => {
-                const rowToRemove = document.getElementById(rowId);
-                if (rowToRemove) {
-                    rowToRemove.classList.add('removing');
-                    setTimeout(() => rowToRemove.remove(), 300);
-                }
-            };
-            
-            addRowBtn.addEventListener('click', createRowImpl);
-
-            submitBtn.addEventListener('click', async () => {
-                const allRows = dataRowsContainer.querySelectorAll('.data-row');
-                const validRows = [];
-
-                allRows.forEach(row => {
-                    const fields = row.querySelectorAll('input, select');
-                    let hasValue = false;
-                    fields.forEach(field => {
-                        if (field.value.trim() !== '') hasValue = true;
-                    });
-                    if (hasValue) validRows.push(row);
-                });
-
-                if (validRows.length === 0) {
-                    notification.textContent = 'Tidak ada data untuk dikirim.';
-                    notification.className = 'mt-4 text-center text-sm font-medium text-yellow-600';
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.classList.add('loading-btn');
-                submitBtn.textContent = 'Mengirim';
-                notification.className = 'mt-4 text-center text-sm font-medium text-slate-600';
-
-                let successCount = 0;
-                let errorCount = 0;
-
-                for (const row of validRows) {
-                    notification.textContent = `Mengirim baris ${successCount + errorCount + 1} dari ${validRows.length}...`;
-                    const formData = new FormData();
-                    row.querySelectorAll('input, select').forEach(field => {
-                        formData.append(field.name, field.value);
-                    });
-
-                    try {
-                        const response = await fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: formData,
-                        });
-                        const result = await response.json();
-                        if (result.result !== 'success') throw new Error(result.error);
-                        successCount++;
-                    } catch (error) {
-                        console.error('Submit Error:', error);
-                        errorCount++;
-                    }
-                }
-
-                if (errorCount > 0) {
-                    notification.textContent = `Selesai. ${successCount} baris berhasil dikirim, ${errorCount} baris gagal. Cek console untuk detail error.`;
-                    notification.className = 'mt-4 text-center text-sm font-medium text-red-600';
-                } else {
-                    notification.textContent = `✓ Semua ${successCount} baris berhasil dikirim!`;
-                    notification.className = 'mt-4 text-center text-sm font-medium text-green-600';
-                    dataRowsContainer.innerHTML = '';
-                    createRowImpl();
-                }
-
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading-btn');
-                submitBtn.textContent = 'Kirim ke Google Sheets';
-            });
-            
-            createRowImpl();
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
     </script>
 </body>
