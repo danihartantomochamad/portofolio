@@ -79,10 +79,12 @@
                         <!-- Header Tabel (Hanya tampil di layar besar) -->
                         <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
                             <div class="col-span-2">Tanggal</div>
-                            <div class="col-span-3">Nama Item</div>
+                            <div class="col-span-2">Nama Item</div>
                             <div class="col-span-2">Kategori</div>
-                            <div class="col-span-2">Jumlah</div>
-                            <div class="col-span-2">Harga (Rp)</div>
+                            <div class="col-span-1">Jumlah</div>
+                            <div class="col-span-2">Harga</div>
+                            <div class="col-span-2">CreatedBy</div>
+                            <!-- <div class="col-span-2">Catatan</div> -->
                             <div class="col-span-1 text-center">Aksi</div>
                         </div>
                         
@@ -139,40 +141,33 @@
             mobileMenu.classList.toggle('hidden');
         });
     </script>
+    <!-- const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9HUGpPCYbjUMWGKmkPY0PFcNTnfhmCIgSYfgockBG6pAkOgWKU6ywRl4eXva4SAU/exec'; -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6eYn5vYs-pVGlbRw_jxwICxhkR7u17Re6CWdQ3EDisd9nOO8s9PN88vXBPkV1N-U/exec';
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9HUGpPCYbjUMWGKmkPY0PFcNTnfhmCIgSYfgockBG6pAkOgWKU6ywRl4eXva4SAU/exec';
 
             const dataRowsContainer = document.getElementById('data-rows-container');
             const addRowBtn = document.getElementById('addRowBtn');
             const submitBtn = document.getElementById('submitBtn');
             const notification = document.getElementById('notification');
 
-            // Fungsi untuk membuat baris baru yang responsif
             const createRowImpl = () => {
                 const rowId = `row-${Date.now()}`;
                 const rowDiv = document.createElement('div');
-                rowDiv.id = rowId;
-                // Tata letak mobile: border, padding. Tata letak web: grid.
                 rowDiv.className = 'data-row border rounded-lg p-4 md:p-0 md:border-none md:grid md:grid-cols-12 md:gap-4 md:items-center';
                 
-                // PENTING: nama 'name' pada input harus sama persis dengan header di Google Sheet
                 rowDiv.innerHTML = `
-                    <!-- Wrapper untuk setiap field agar bisa diberi label di mobile -->
                     <div class="md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Tanggal</label>
-                        <input type="date" name="Tanggal" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                        <input type="date" name="Tanggal" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
                     </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-3">
+                    <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Nama Item</label>
-                        <input type="text" name="Nama" placeholder="e.g., Kopi Susu" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                        <input type="text" name="Nama" placeholder="Ex: Makan Siang" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
                     </div>
-
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
-                        <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition bg-white appearance-none">
-                            <option value="">Pilih Kategori</option>
+                        <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
                             <option value="Makanan">Makanan</option>
                             <option value="Minuman">Minuman</option>
                             <option value="Investasi">Kondangan, Utang/Pinjaman, Investasi</option>
@@ -181,15 +176,23 @@
                             <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
-
-                    <div class="mt-4 md:mt-0 md:col-span-2">
+                    <div class="mt-4 md:mt-0 md:col-span-1">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
-                        <input type="number" name="Jumlah" placeholder="e.g., 10" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                        <input type="number" name="Jumlah" placeholder="1" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
                     </div>
-
                     <div class="mt-4 md:mt-0 md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Harga (Rp)</label>
-                        <input type="number" name="Harga" placeholder="e.g., 18000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Harga</label>
+                        <input type="number" name="Harga" placeholder="Rp. 18000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">CreatedBy</label>
+                        <select name="CreatedBy" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
+                            <option value="All">All</option>
+                            <option value="Dani">Dani</option>
+                            <option value="Diana">Diana</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
                     </div>
                     
                     <div class="mt-4 md:mt-0 md:col-span-1 flex justify-end md:justify-center">
@@ -197,29 +200,27 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
                         </button>
                     </div>
+                    <div class="mt-4 md:mt-0 md:col-span-12">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Catatan</label>
+                        <textarea name="Catatan" rows="3" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400"  placeholder="Catatan transaksi..."></textarea>
+                    </div>
                 `;
                 dataRowsContainer.appendChild(rowDiv);
-                rowDiv.querySelector('.removeRowBtn').addEventListener('click', () => removeRowImpl(rowId));
-            };
-
-            const removeRowImpl = (rowId) => {
-                const rowToRemove = document.getElementById(rowId);
-                if (rowToRemove) {
-                    rowToRemove.classList.add('removing');
-                    setTimeout(() => rowToRemove.remove(), 300);
-                }
+                rowDiv.querySelector('.removeRowBtn').addEventListener('click', () => {
+                    rowDiv.classList.add('removing');
+                    setTimeout(() => rowDiv.remove(), 300);
+                });
             };
             
             addRowBtn.addEventListener('click', createRowImpl);
-
+            
             submitBtn.addEventListener('click', async () => {
                 const allRows = dataRowsContainer.querySelectorAll('.data-row');
                 const validRows = [];
-
                 allRows.forEach(row => {
-                    const fields = row.querySelectorAll('input, select');
                     let hasValue = false;
-                    fields.forEach(field => {
+                    // PERBAIKAN: Menambahkan 'textarea' ke dalam selector
+                    row.querySelectorAll('input, select, textarea').forEach(field => {
                         if (field.value.trim() !== '') hasValue = true;
                     });
                     if (hasValue) validRows.push(row);
@@ -242,15 +243,13 @@
                 for (const row of validRows) {
                     notification.textContent = `Mengirim baris ${successCount + errorCount + 1} dari ${validRows.length}...`;
                     const formData = new FormData();
-                    row.querySelectorAll('input, select').forEach(field => {
+                    // PERBAIKAN: Menambahkan 'textarea' ke dalam selector
+                    row.querySelectorAll('input, select, textarea').forEach(field => {
                         formData.append(field.name, field.value);
                     });
 
                     try {
-                        const response = await fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: formData,
-                        });
+                        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                         const result = await response.json();
                         if (result.result !== 'success') throw new Error(result.error);
                         successCount++;
@@ -261,7 +260,7 @@
                 }
 
                 if (errorCount > 0) {
-                    notification.textContent = `Selesai. ${successCount} baris berhasil dikirim, ${errorCount} baris gagal. Cek console untuk detail error.`;
+                    notification.textContent = `Selesai. ${successCount} baris berhasil dikirim, ${errorCount} baris gagal.`;
                     notification.className = 'mt-4 text-center text-sm font-medium text-red-600';
                 } else {
                     notification.textContent = `✓ Semua ${successCount} baris berhasil dikirim!`;
