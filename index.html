@@ -43,43 +43,45 @@
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-        
-        <div class="mb-6 text-center">
-            <h1 class="text-3xl font-bold text-slate-800">Form Input Data</h1>
-            <p class="text-slate-500 mt-2">Kirim data baris per baris ke Google Sheets.</p>
-        </div>
-
-        <!-- Kontainer Spreadsheet -->
-        <div class="overflow-x-auto">
-            <div id="spreadsheet-container" class="space-y-2">
-                <!-- Header Tabel (Hanya tampil di layar besar) -->
-                <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
-                    <div class="col-span-2">Tanggal</div>
-                    <div class="col-span-3">Nama Item</div>
-                    <div class="col-span-2">Kategori</div>
-                    <div class="col-span-2">Jumlah</div>
-                    <div class="col-span-2">Harga (Rp)</div>
-                    <div class="col-span-1 text-center">Aksi</div>
-                </div>
-                
-                <div id="data-rows-container" class="space-y-4"></div>
+    <div class="container mx-auto max-w-12xl p-4 md:p-8">
+        <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <a href="laporan.html"  class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">Laporan Bulanan -></a>
+            <div class="mb-6 text-center">
+                <h1 class="text-3xl font-bold text-slate-800">Form Input Data Pengeluaran</h1>
+                <p class="text-slate-500 mt-2">Kirim data baris per baris ke Google Sheets.</p>
             </div>
+    
+            <!-- Kontainer Spreadsheet -->
+            <div class="overflow-x-auto">
+                <div id="spreadsheet-container" class="space-y-2">
+                    <!-- Header Tabel (Hanya tampil di layar besar) -->
+                    <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
+                        <div class="col-span-2">Tanggal</div>
+                        <div class="col-span-3">Nama Item</div>
+                        <div class="col-span-2">Kategori</div>
+                        <div class="col-span-2">Jumlah</div>
+                        <div class="col-span-2">Harga (Rp)</div>
+                        <div class="col-span-1 text-center">Aksi</div>
+                    </div>
+                    
+                    <div id="data-rows-container" class="space-y-4"></div>
+                </div>
+            </div>
+    
+            <!-- Tombol Aksi -->
+            <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+                <button id="addRowBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    Tambah Baris
+                </button>
+                <button id="submitBtn" class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">
+                    Kirim ke Google Sheets
+                </button>
+            </div>
+    
+            <!-- Area Notifikasi Pengiriman -->
+            <div id="notification" class="mt-4 text-center text-sm font-medium"></div>
         </div>
-
-        <!-- Tombol Aksi -->
-        <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-            <button id="addRowBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-transform transform hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                Tambah Baris
-            </button>
-            <button id="submitBtn" class="w-full sm:w-auto bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition">
-                Kirim ke Google Sheets
-            </button>
-        </div>
-
-        <!-- Area Notifikasi Pengiriman -->
-        <div id="notification" class="mt-4 text-center text-sm font-medium"></div>
     </div>
 
     <script>
@@ -119,10 +121,6 @@
                             <option value="Makanan">Makanan</option>
                             <option value="Minuman">Minuman</option>
                             <option value="Kondangan">Kondangan</option>
-                            <option value="Internet">Internet</option>
-                            <option value="Hiburan">Hiburan</option>
-                            <option value="Barang">Barang</option>
-                            <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
 
