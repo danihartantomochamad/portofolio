@@ -18,10 +18,44 @@
     <script src="https://unpkg.com/feather-icons"></script>
 
     <style>
-        /* Menggunakan font Inter sebagai default */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; margin: 2rem; background-color: #f9fafb; color: #111827; }
+      .container { max-width: 800px; margin: 0 auto; }
+      h1 { color: #1f2937; text-align: center; }
+      
+      /* Kontrol dan Tombol */
+      .controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: center; background-color: #fff; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+      .controls label { font-weight: 600; }
+      .controls input { padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
+      .controls button { padding: 0.6rem 1.2rem; border: none; border-radius: 0.375rem; color: white; cursor: pointer; font-weight: 600; }
+      #generate-button { background-color: #2563eb; }
+      #print-button { background-color: #16a34a; }
+      .nav-link { display: block; text-align: center; margin-top: 1.5rem; color: #2563eb; text-decoration: none; }
+
+      /* Konten Laporan */
+      #report-content { background-color: #fff; padding: 2rem; border-radius: 0.5rem; display: none; }
+      #report-header h2 { margin: 0; text-align: center; }
+      #report-header p { margin: 0.25rem 0 2rem 0; text-align: center; color: #6b7280; }
+      
+      /* Box Summary */
+      #summary-container { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; }
+      .summary-box { padding: 1rem 1.5rem; border-radius: 0.5rem; text-align: center; border: 1px solid #e5e7eb; flex-grow: 1; }
+      .summary-box h3 { margin: 0 0 0.25rem 0; font-size: 0.9rem; font-weight: 600; color: #374151; }
+      .summary-box p { margin: 0; font-size: 1.75rem; font-weight: 600; color: #111827; }
+
+      /* Tabel Laporan */
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #e5e7eb; padding: 0.75rem 1rem; text-align: left; }
+      thead { background-color: #f3f4f6; }
+      th { font-weight: 600; }
+      
+      #status { text-align: center; font-size: 1.1rem; color: #6b7280; padding: 2rem; }
+
+      /* Style untuk Cetak */
+      @media print {
+        body { margin: 0; background-color: #fff; }
+        .controls, .nav-link { display: none; }
+        #report-content { display: block; box-shadow: none; border-radius: 0; padding: 0; }
+      }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
@@ -41,6 +75,7 @@
                     <a href="./index.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Beranda</a>
                     <a href="./form.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Form Pengeluaran</a>
                     <a href="./laporan.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Report</a>
+                    <a href="./display_all_data.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Display Data</a>
                     <a href="./tentang.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Tentang</a>
                     <!-- <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">Daftar</a> -->
                 </div>
@@ -58,6 +93,7 @@
                 <a href="./index.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Beranda</a>
                 <a href="./form.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Form Pengeluaran</a>
                 <a href="./laporan.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Report</a>
+                <a href="./display_all_data.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Display Data</a>
                 <a href="./tentang.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Tentang</a>
                 <!-- <a href="#" class="block mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-center hover:bg-indigo-700 transition duration-300">Daftar</a> -->
             </div>
@@ -65,37 +101,32 @@
     </header>
 
     <!-- =========== Content =========== -->
-    <main class="flex-grow container mx-auto px-6 py-12">
-        <div class="container mx-auto max-w-12xl p-4 md:p-8">
+    <main class="flex-grow container mx-auto px-2 py-12">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-12xl mx-auto">
             <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
                 <div class="text-center mb-6">
-                    <h1 class="text-3xl font-bold text-slate-800">Laporan Keuangan Periodik</h1>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Laporan Data Pengeluaran</h1>
                     <p class="text-slate-500 mt-2">Pilih rentang tanggal untuk melihat total harga.</p>
                 </div>
 
                 <!-- Filter Section -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label for="startDate" class="block text-sm font-medium text-slate-700 mb-1">Tanggal Mulai</label>
-                        <input type="date" id="startDate" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
-                    <div>
-                        <label for="endDate" class="block text-sm font-medium text-slate-700 mb-1">Tanggal Akhir</label>
-                        <input type="date" id="endDate" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
-                    </div>
+                <h1>Laporan Periodik</h1>
+
+                <div class="controls">
+                    <label for="startDate">Tanggal Mulai:</label>
+                    <input type="date" id="startDate" required>
+                    <label for="endDate">Tanggal Selesai:</label>
+                    <input type="date" id="endDate" required>
+                    <button id="generate-button">Buat Laporan</button>
+                    <button id="print-button" style="display: none;">Cetak</button>
                 </div>
 
-                <button id="fetchTotalBtn" class="w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition flex items-center justify-center gap-2">
-                    Tampilkan Total Pengeluaran
-                </button>
+                <div id="status">Silakan pilih rentang tanggal dan klik "Buat Laporan".</div>
 
-                <!-- Result Section -->
-                <div id="resultContainer" class="mt-8 text-center hidden">
-                    <div class="bg-slate-50 p-6 rounded-lg">
-                        <p class="text-slate-600 text-lg">Total Pengeluaran</p>
-                        <h2 id="totalHarga" class="text-4xl font-bold text-slate-800 mt-2"></h2>
-                        <p id="dateRange" class="text-slate-500 text-sm mt-1"></p>
-                    </div>
+                <div id="report-content">
+                    <div id="report-header"></div>
+                    <div id="summary-container"></div>
+                    <div id="table-container"></div>
                 </div>
                 
                 <!-- Notification Area -->
@@ -137,89 +168,119 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // PENTING: Gunakan URL Web App yang SAMA dengan form input Anda
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6eYn5vYs-pVGlbRw_jxwICxhkR7u17Re6CWdQ3EDisd9nOO8s9PN88vXBPkV1N-U/exec';
+        // !!! PASTIKAN URL INI SAMA DENGAN YANG ADA DI index.html !!!
+        const API_URL = "https://script.google.com/macros/s/AKfycbz68Tie0l1W6ZC4UYVE_z0xV3V212lwWnMyyNdNmjE5lQH_ePrrKvmrtVOgiB0aDV8/exec";
 
-            const fetchTotalBtn = document.getElementById('fetchTotalBtn');
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-            const resultContainer = document.getElementById('resultContainer');
-            const totalHargaEl = document.getElementById('totalHarga');
-            const dateRangeEl = document.getElementById('dateRange');
-            const notification = document.getElementById('notification');
+        const generateButton = document.getElementById('generate-button');
+        const printButton = document.getElementById('print-button');
+        const reportContent = document.getElementById('report-content');
+        const statusDiv = document.getElementById('status');
+        
+        generateButton.addEventListener('click', function() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
 
-            const fetchData = () => {
-                const startDate = startDateInput.value;
-                const endDate = endDateInput.value;
+            if (!startDate || !endDate) {
+                statusDiv.textContent = 'Harap isi tanggal mulai dan tanggal selesai.';
+                statusDiv.style.color = 'red';
+                return;
+            }
 
-                if (!startDate || !endDate) {
-                    showNotification('Harap pilih tanggal mulai dan tanggal akhir.', 'red');
-                    return;
-                }
+            statusDiv.textContent = 'Mengambil data laporan...';
+            statusDiv.style.color = '#6b7280';
+            reportContent.style.display = 'none';
+            printButton.style.display = 'none';
 
-                showLoading(true);
-                resultContainer.classList.add('hidden');
-                
-                const url = `${SCRIPT_URL}?startDate=${startDate}&endDate=${endDate}`;
+            const params = new URLSearchParams({ startDate, endDate });
+            const fullUrl = `${API_URL}?${params.toString()}`;
 
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Respons jaringan bermasalah.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        showLoading(false);
-                        if (data.result === 'success') {
-                            displayResult(data.totalHarga, startDate, endDate);
-                        } else {
-                            throw new Error(data.error || 'Terjadi error pada skrip.');
-                        }
-                    })
-                    .catch(error => {
-                        showLoading(false);
-                        console.error('Fetch Error:', error);
-                        showNotification(`Error: ${error.message}`, 'red');
-                    });
-            };
-
-            fetchTotalBtn.addEventListener('click', fetchData);
-
-            function displayResult(total, start, end) {
-                const formatter = new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0
+            fetch(fullUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => buildReport(data, startDate, endDate))
+                .catch(error => {
+                    statusDiv.textContent = `Gagal memuat data: ${error.message}`;
+                    statusDiv.style.color = 'red';
                 });
-                totalHargaEl.textContent = formatter.format(total);
-                dateRangeEl.textContent = `Periode ${formatDate(start)} - ${formatDate(end)}`;
-                resultContainer.classList.remove('hidden');
-                notification.textContent = '';
-            }
-
-            function showLoading(isLoading) {
-                if (isLoading) {
-                    fetchTotalBtn.disabled = true;
-                    fetchTotalBtn.innerHTML = '<div class="loader"></div> <span class="ml-2">Memuat...</span>';
-                    notification.textContent = '';
-                } else {
-                    fetchTotalBtn.disabled = false;
-                    fetchTotalBtn.innerHTML = 'Tampilkan Total Pengeluaran';
-                }
-            }
-
-            function showNotification(message, color = 'red') {
-                notification.textContent = message;
-                notification.className = `mt-4 text-center text-sm font-medium text-${color}-600`;
-            }
-
-            function formatDate(dateString) {
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                return new Date(dateString).toLocaleDateString('id-ID', options);
-            }
         });
+        
+        printButton.addEventListener('click', () => {
+            window.print();
+        });
+
+        function buildReport(data, startDate, endDate) {
+            if (data.error) {
+                statusDiv.textContent = `Gagal: ${data.error}`;
+                statusDiv.style.color = 'red';
+                return;
+            }
+            if (!data || data.length === 0) {
+                statusDiv.textContent = 'Tidak ada data ditemukan untuk periode yang dipilih.';
+                return;
+            }
+
+            statusDiv.style.display = 'none';
+            reportContent.style.display = 'block';
+            printButton.style.display = 'inline-block';
+
+            // 1. Buat Header Laporan
+            const reportHeader = document.getElementById('report-header');
+            const formattedStart = new Date(startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const formattedEnd = new Date(endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            reportHeader.innerHTML = `
+                <h2>Laporan Transaksi</h2>
+                <p>Periode: ${formattedStart} - ${formattedEnd}</p>
+            `;
+
+            // 2. Kalkulasi dan Buat Summary
+            const summaryContainer = document.getElementById('summary-container');
+            const headers = Object.keys(data[0]);
+            let totalHarga = 0;
+            let totalJumlah = 0;
+            const hargaHeader = headers.find(h => h.toLowerCase() === 'harga');
+            const jumlahHeader = headers.find(h => h.toLowerCase() === 'jumlah');
+
+            data.forEach(row => {
+                if (hargaHeader) {
+                    const harga = parseFloat(String(row[hargaHeader]).replace(/[^0-9,-]+/g, ""));
+                    if (!isNaN(harga)) totalHarga += harga;
+                }
+                if (jumlahHeader) {
+                    const jumlah = parseInt(String(row[jumlahHeader]).replace(/[^0-g]+/g, ""), 10);
+                    if (!isNaN(jumlah)) totalJumlah += jumlah;
+                }
+            });
+            
+            summaryContainer.innerHTML = `
+                <div class="summary-box">
+                    <h3>Total Transaksi</h3>
+                    <p>${data.length}</p>
+                </div>
+                <div class="summary-box">
+                    <h3>Total Jumlah Item</h3>
+                    <p>${new Intl.NumberFormat('id-ID').format(totalJumlah)}</p>
+                </div>
+                <div class="summary-box">
+                    <h3>Total Pengeluaran</h3>
+                    <p>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalHarga)}</p>
+                </div>
+            `;
+
+            // 3. Buat Tabel Detail
+            const tableContainer = document.getElementById('table-container');
+            let table = '<table><thead><tr>';
+            headers.forEach(header => { table += `<th>${header}</th>`; });
+            table += '</tr></thead><tbody>';
+            data.forEach(row => {
+                table += '<tr>';
+                headers.forEach(header => { table += `<td>${row[header]}</td>`; });
+                table += '</tr>';
+            });
+            table += '</tbody></table>';
+            tableContainer.innerHTML = table;
+        }
     </script>
 </body>
 </html>
