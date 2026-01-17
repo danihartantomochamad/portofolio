@@ -89,7 +89,7 @@
     <!-- =========== Content =========== -->
     <main class="flex-grow container mx-auto px-2 py-12">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-12xl mx-auto">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Form Input Data Keuangan</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Form Input Undangan Resepsi</h1>
             <p class="text-gray-600 mb-6 text-center">Kirim data baris per baris ke Google Sheets.</p>
             <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
         
@@ -98,14 +98,16 @@
                     <div id="spreadsheet-container" class="space-y-2">
                         <!-- Header Tabel (Hanya tampil di layar besar) -->
                         <div class="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
-                            <div class="col-span-2">Tanggal Transaksi</div>
-                            <div class="col-span-2">Nama Item</div>
+                            <div class="col-span-2">Nama</div>
                             <div class="col-span-2">Kategori</div>
-                            <div class="col-span-1">Jumlah</div>
-                            <div class="col-span-2">Harga</div>
-                            <div class="col-span-2">CreatedBy</div>
+                            <div class="col-span-2">Jenis</div>
+                            <div class="col-span-2">Pemilik</div>
+                            <div class="col-span-2">Telepon</div>
+                            <div class="col-span-2">Nominal</div>
+                            <!-- <div class="col-span-1">Alamat</div> -->
+                            <!-- <div class="col-span-2">CreatedBy</div> -->
                             <!-- <div class="col-span-2">Catatan</div> -->
-                            <div class="col-span-1 text-center">Remove</div>
+                            <!-- <div class="col-span-1 text-center">Remove</div> -->
                         </div>
                         
                         <div id="data-rows-container" class="space-y-4"></div>
@@ -161,11 +163,9 @@
             mobileMenu.classList.toggle('hidden');
         });
     </script>
-    <!-- const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9HUGpPCYbjUMWGKmkPY0PFcNTnfhmCIgSYfgockBG6pAkOgWKU6ywRl4eXva4SAU/exec'; -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz68Tie0l1W6ZC4UYVE_z0xV3V212lwWnMyyNdNmjE5lQH_ePrrKvmrtVOgiB0aDV8/exec';
-
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby70JYSN3LGXuwVZLW-OgjUd873_eUVzBTISFhDVTaFLJrwvWLK-qQbu1a8R9l5UBvR/exec';
             const dataRowsContainer = document.getElementById('data-rows-container');
             const addRowBtn = document.getElementById('addRowBtn');
             const submitBtn = document.getElementById('submitBtn');
@@ -177,37 +177,31 @@
                 rowDiv.className = 'data-row border rounded-lg p-4 md:p-0 md:border-none md:grid md:grid-cols-12 md:gap-4 md:items-center';
                 
                 rowDiv.innerHTML = `
-                    <div class="md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Tanggal</label>
-                        <input type="date" name="Tanggal" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
-                    </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Nama Item</label>
-                        <input type="text" name="Nama" placeholder="Ex: Makan Siang" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400" required>
+                        <input type="text" name="Nama" placeholder="Ex: Dani Hartanto" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400" required>
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
                         <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
-                            <option value="Lainnya">Lainnya</option>
-                            <option value="Makanan">Makanan</option>
-                            <option value="Minuman">Minuman</option>
-                            <option value="Investasi">Kondangan, Utang/Pinjaman, Investasi</option>
-                            <option value="Hiburan">Hiburan</option>
-                            <option value="Sedekah">Sedekah</option>
+                            <option value="Digital">Digital</option>
+                            <option value="Cetak">Cetak</option>
                         </select>
                     </div>
-                    <div class="mt-4 md:mt-0 md:col-span-1">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
-                        <input type="number" name="Jumlah" placeholder="00" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
-                    </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Harga</label>
-                        <input type="number" name="Harga" placeholder="Rp. 18000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Jenis Teman</label>
+                        <select name="Jenis" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
+                            <option value="Teman">Teman</option>
+                            <option value="Teman Sekolah">Teman Sekolah</option>
+                            <option value="Teman Kuliah">Teman Kuliah</option>
+                            <option value="Teman Kerja">Teman Kerja</option>
+                            <option value="Keluarga">Keluarga</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
                     </div>
-                    
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">CreatedBy</label>
-                        <select name="CreatedBy" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
+                        <select name="Pemilik" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
                             <option value="Lainnya">Lainnya</option>
                             <option value="All">All</option>
                             <option value="Dani">Dani</option>
@@ -215,14 +209,29 @@
                         </select>
                     </div>
                     
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Telepon</label>
+                        <input type="text" name="Telepon" placeholder="+62 896-1260-9081" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div class="mt-4 md:mt-0 md:col-span-2">
+                        <label class="text-sm font-medium text-slate-600 md:hidden">Nominal</label>
+                        <input type="number" name="Nominal" placeholder="Rp. 50000" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                    </div>
+
+                    <div class="col-span-12 mt-4 md:mt-0">Alamat</div>
+                    <div class="mt-4 md:mt-0 md:col-span-12">
+                        <textarea name="Alamat" rows="3" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400"  placeholder="Ex: Margoagung, Sumbberejo."></textarea>
+                    </div>
+                    
+                    <div class="col-span-1 mt-4 md:mt-0">Catatan</div>
+                    <div class="mt-4 md:mt-0 md:col-span-12">
+                        <textarea name="Catatan" rows="3" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400"  placeholder="Catatan transaksi..."></textarea>
+                    </div>
+                    <div class="col-span-2 mt-4 md:mt-0">Remove Form</div>
                     <div class="mt-4 md:mt-0 md:col-span-1 flex justify-end md:justify-center">
                         <button class="removeRowBtn text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-100 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
                         </button>
-                    </div>
-                    <div class="mt-4 md:mt-0 md:col-span-12">
-                        <label class="text-sm font-medium text-slate-600 md:hidden">Catatan</label>
-                        <textarea name="Catatan" rows="3" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400"  placeholder="Catatan transaksi..."></textarea>
                     </div>
                 `;
                 dataRowsContainer.appendChild(rowDiv);
@@ -256,23 +265,15 @@
 
                     if (isRowEmpty) continue; // Lewati baris yang benar-benar kosong
 
-                    const tanggalInput = row.querySelector('input[name="Tanggal"]');
                     const namaProdukInput = row.querySelector('input[name="Nama"]');
-                    const hargaInput = row.querySelector('input[name="Harga"]');
                     let isRowValid = true;
 
-                    if (!tanggalInput.value.trim()) {
-                        tanggalInput.classList.add('input-error');
-                        isRowValid = false;
-                    }
+                    
                     if (!namaProdukInput.value.trim()) {
                         namaProdukInput.classList.add('input-error');
                         isRowValid = false;
                     }
-                    if (!hargaInput.value.trim()) {
-                        hargaInput.classList.add('input-error');
-                        isRowValid = false;
-                    }
+                    
 
                     if (isRowValid) {
                         validRows.push(row);
@@ -305,15 +306,47 @@
 
                 for (const row of validRows) {
                     notification.textContent = `Mengirim baris ${successCount + errorCount + 1} dari ${validRows.length}...`;
+                    
                     const formData = new FormData();
                     row.querySelectorAll('input, select, textarea').forEach(field => {
-                        formData.append(field.name, field.value);
+                        let fieldValue = field.value;
+
+                        // CEGATAN: Jika nama field adalah 'Telepon', bersihkan karakternya
+                        // Ganti 'Telepon' sesuai dengan atribut 'name' pada input Telepon Anda
+                        // CEGATAN: Khusus untuk field Telepon
+                        if (field.name === 'Telepon') {
+                            // 1. Hilangkan karakter +, -, dan spasi
+                            fieldValue = fieldValue.replace(/[\+\-\s]/g, '');
+
+                            // 2. Ganti angka 0 di depan dengan 62
+                            if (fieldValue.startsWith('0')) {
+                                fieldValue = '62' + fieldValue.slice(1);
+                            }
+                        }
+
+                        formData.append(field.name, fieldValue);
                     });
 
+                    const dataObject = Object.fromEntries(formData.entries());
+                    console.log('Data dikirim:', JSON.stringify(dataObject));
+
                     try {
-                        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                        const response = await fetch(SCRIPT_URL, { 
+                            method: 'POST', 
+                            mode: 'cors', 
+                            headers: {
+                                'Content-Type': 'text/plain;charset=utf-8' 
+                            },
+                            body: JSON.stringify(dataObject) 
+                        });
+
+                        // Cek status respon sebelum parsing JSON
+                        if (!response.ok) throw new Error('Network response was not ok');
+
                         const result = await response.json();
+                        
                         if (result.result !== 'success') throw new Error(result.error);
+                        
                         successCount++;
                     } catch (error) {
                         console.error('Submit Error:', error);
