@@ -191,17 +191,21 @@
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Kategori</label>
                         <select name="Kategori" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400 bg-white">
-                            <option value="Lainnya">Lainnya</option>
+                            <option value="Transportasi">Transportasi</option>
+                            <option value="Iuran">Iuran</option>
+                            <option value="Internet dan Pulsa">Internet & Pulsa</option>
+                            <option value="Perawatan Diri">Perawatan Diri</option>
                             <option value="Makanan">Makanan</option>
                             <option value="Minuman">Minuman</option>
                             <option value="Investasi">Kondangan, Utang/Pinjaman, Investasi</option>
                             <option value="Hiburan">Hiburan</option>
                             <option value="Sedekah">Sedekah</option>
+                            <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-1">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Jumlah</label>
-                        <input type="number" name="Jumlah" placeholder="00" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
+                        <input type="number" name="Jumlah" id="JumlahItem" placeholder="00" class="w-full mt-1 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div class="mt-4 md:mt-0 md:col-span-2">
                         <label class="text-sm font-medium text-slate-600 md:hidden">Harga</label>
@@ -234,6 +238,7 @@
                     setTimeout(() => rowDiv.remove(), 300);
                 });
                 document.getElementById('myDate').valueAsDate = new Date();
+                document.getElementById('JumlahItem').valueAsDate = 1;
             };
             
             addRowBtn.addEventListener('click', createRowImpl);
