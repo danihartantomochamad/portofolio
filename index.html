@@ -19,9 +19,14 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        
+        /* Tambahan styling untuk bottom nav agar efek sentuhannya lebih rapi di HP */
+        .bottom-nav-item {
+            -webkit-tap-highlight-color: transparent;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen pb-16 md:pb-0 relative">
 
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4">
@@ -36,49 +41,20 @@
                         <i class="fa-solid fa-house mr-2"></i> Beranda
                     </a>
                     <a href="./form.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300">
-                        <i class="fa-solid fa-file-invoice-dollar mr-2"></i> Form Pengeluaran
-                    </a>
-                    <a href="./form.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300">
-                        <i class="fa-solid fa-envelope-open-text mr-2"></i> Form Undangan
+                        <i class="fa-solid fa-file-invoice-dollar mr-2"></i> Form
                     </a>
                     <a href="./laporan.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300">
                         <i class="fa-solid fa-chart-bar mr-2"></i> Report
                     </a>
                     <a href="./display_all_data.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300">
-                        <i class="fa-solid fa-table mr-2"></i> Display Data
+                        <i class="fa-solid fa-table mr-2"></i> Data
                     </a>
                     <a href="./tentang.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300">
                         <i class="fa-solid fa-circle-info mr-2"></i> Tentang
                     </a>
-                    </div>
-
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-                        <i data-feather="menu" class="h-6 w-6"></i>
-                    </button>
                 </div>
-            </div>
-
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="./index.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Beranda
-                </a>
-                <a href="./form.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-file-invoice-dollar mr-3 w-5 text-center"></i> Form Pengeluaran
-                </a>
-                <a href="./form_undangan.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-envelope-open-text mr-3 w-5 text-center"></i> Form Undangan
-                </a>
-                <a href="./laporan.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-chart-bar mr-3 w-5 text-center"></i> Report
-                </a>
-                <a href="./display_all_data.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-table mr-3 w-5 text-center"></i> Display Data
-                </a>
-                <a href="./tentang.html" class="block flex items-center py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">
-                    <i class="fa-solid fa-circle-info mr-3 w-5 text-center"></i> Tentang
-                </a>
-            </div>
+                
+                </div>
         </nav>
     </header>
 
@@ -95,19 +71,14 @@
             <p class="mb-4">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
             </p>
-            <p class="mb-4">
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
-            </p>
 
             <div class="grid md:grid-cols-2 gap-6 mt-8">
                 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     <h3 class="font-semibold text-lg mb-2 flex items-center">
                         <i class="fa-solid fa-file-pen mr-2 text-indigo-500"></i> Catatan Keuangan
                     </h3>
-                    
                     <a href="./form.html" class="group block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-yellow-100 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 flex items-center justify-between">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Buka Formulir Catatan Keuangan</h5>
-                        
                         <i data-feather="arrow-right" class="text-yellow-600 opacity-0 transform -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 h-8 w-8 ml-4"></i>
                     </a>
                 </div>
@@ -116,10 +87,8 @@
                     <h3 class="font-semibold text-lg mb-2 flex items-center">
                         <i class="fa-solid fa-chart-pie mr-2 text-indigo-500"></i> Laporan Keuangan
                     </h3>
-                    
                     <a href="./laporan.html" class="group block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-green-100 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 flex items-center justify-between">
                         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Lihat Laporan Keuanganmu Disini</h5>
-                        
                         <i data-feather="arrow-right" class="text-green-600 opacity-0 transform -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 h-8 w-8 ml-4"></i>
                     </a>
                 </div>
@@ -127,11 +96,11 @@
         </div>
     </main>
 
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto px-6 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
+    <footer class="bg-gray-800 text-white pb-4 md:pb-8">
+        <div class="container mx-auto px-6 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                 <p class="text-sm text-gray-400">&copy; 2025 DaniHartanto. Semua Hak Cipta Dilindungi.</p>
-                <div class="flex mt-4 md:mt-0 space-x-4">
+                <div class="flex mt-4 md:mt-0 space-x-4 justify-center">
                     <a href="#" class="text-gray-400 hover:text-white transition duration-300">
                         <i data-feather="facebook" class="h-5 w-5"></i>
                     </a>
@@ -146,16 +115,84 @@
         </div>
     </footer>
 
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 px-2 py-2 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center text-gray-500">
+            <a href="./index.html" class="bottom-nav-item flex flex-col items-center justify-center w-full text-indigo-600">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Beranda</span>
+            </a>
+            
+            <div class="relative flex flex-col items-center justify-center w-full">
+                <button id="btn-form" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium">Form</span>
+                </button>
+                
+                <div id="popup-form" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./form.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
+                        <i class="fa-solid fa-file-pen mr-2 text-indigo-500"></i> Keuangan
+                    </a>
+                    <a href="./form_undangan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
+                        <i class="fa-solid fa-envelope-open-text mr-2 text-indigo-500"></i> Undangan
+                    </a>
+                </div>
+            </div>
+            
+            <div class="relative flex flex-col items-center justify-center w-full">
+                <button id="btn-report" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
+                    <i class="fa-solid fa-chart-bar text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium">Report</span>
+                </button>
+                
+                <div id="popup-report" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./laporan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
+                        <i class="fa-solid fa-chart-pie mr-2 text-green-500"></i> Report Data
+                    </a>
+                    <a href="./display_all_data.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
+                        <i class="fa-solid fa-table-list mr-2 text-green-500"></i> All Data
+                    </a>
+                </div>
+            </div>
+            
+            <a href="./tentang.html" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-circle-info text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Tentang</span>
+            </a>
+        </div>
+    </nav>
     <script>
         // Inisialisasi Feather Icons
         feather.replace();
 
-        // Logika untuk toggle menu mobile
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        // LOGIKA POP-UP BOTTOM NAVIGATION
+        const btnForm = document.getElementById('btn-form');
+        const popupForm = document.getElementById('popup-form');
+        
+        const btnReport = document.getElementById('btn-report');
+        const popupReport = document.getElementById('popup-report');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        // Fungsi toggle Pop-up Form
+        btnForm.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah klik menyebar ke document
+            popupForm.classList.toggle('hidden');
+            popupReport.classList.add('hidden'); // Menutup popup report jika sedang terbuka
+        });
+
+        // Fungsi toggle Pop-up Report
+        btnReport.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah klik menyebar ke document
+            popupReport.classList.toggle('hidden');
+            popupForm.classList.add('hidden'); // Menutup popup form jika sedang terbuka
+        });
+
+        // Menutup pop-up saat mengklik di luar area menu
+        document.addEventListener('click', (e) => {
+            if (!popupForm.contains(e.target) && e.target !== btnForm) {
+                popupForm.classList.add('hidden');
+            }
+            if (!popupReport.contains(e.target) && e.target !== btnReport) {
+                popupReport.classList.add('hidden');
+            }
         });
     </script>
 </body>
