@@ -6,16 +6,27 @@
     <title>Laporan Bulanan</title>
     
     <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Feather Icons for hamburger menu -->
     <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        /* Menggunakan font Inter sebagai default */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Tambahan styling untuk bottom nav agar efek sentuhannya lebih rapi di HP */
+        .bottom-nav-item {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
 
     <style>
         body { font-family: 'Inter', sans-serif; margin: 2rem; background-color: #f9fafb; color: #111827; }
@@ -81,12 +92,6 @@
                     <!-- <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">Daftar</a> -->
                 </div>
 
-                <!-- Tombol Hamburger untuk Mobile -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-                        <i data-feather="menu" class="h-6 w-6"></i>
-                    </button>
-                </div>
             </div>
 
             <!-- Menu untuk Mobile (disembunyikan secara default) -->
@@ -157,16 +162,84 @@
         </div>
     </footer>
 
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 px-2 py-2 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center text-gray-500">
+            <a href="./index.html" class="bottom-nav-item flex flex-col items-center justify-center w-full text-indigo-600">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Beranda</span>
+            </a>
+            
+            <div class="relative flex flex-col items-center justify-center w-full">
+                <button id="btn-form" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium">Form</span>
+                </button>
+                
+                <div id="popup-form" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./form.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
+                        <i class="fa-solid fa-file-pen mr-2 text-indigo-500"></i> Form Keuangan
+                    </a>
+                    <a href="./form_undangan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
+                        <i class="fa-solid fa-envelope-open-text mr-2 text-indigo-500"></i> Form Undangan
+                    </a>
+                </div>
+            </div>
+            
+            <div class="relative flex flex-col items-center justify-center w-full">
+                <button id="btn-report" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
+                    <i class="fa-solid fa-chart-bar text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium">Report</span>
+                </button>
+                
+                <div id="popup-report" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./laporan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
+                        <i class="fa-solid fa-chart-pie mr-2 text-green-500"></i> Report Data
+                    </a>
+                    <a href="./display_all_data.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
+                        <i class="fa-solid fa-table-list mr-2 text-green-500"></i> Report All Data
+                    </a>
+                </div>
+            </div>
+            
+            <a href="./tentang.html" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-circle-info text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Tentang</span>
+            </a>
+        </div>
+    </nav>
     <script>
         // Inisialisasi Feather Icons
         feather.replace();
 
-        // Logika untuk toggle menu mobile
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        // LOGIKA POP-UP BOTTOM NAVIGATION
+        const btnForm = document.getElementById('btn-form');
+        const popupForm = document.getElementById('popup-form');
+        
+        const btnReport = document.getElementById('btn-report');
+        const popupReport = document.getElementById('popup-report');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        // Fungsi toggle Pop-up Form
+        btnForm.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah klik menyebar ke document
+            popupForm.classList.toggle('hidden');
+            popupReport.classList.add('hidden'); // Menutup popup report jika sedang terbuka
+        });
+
+        // Fungsi toggle Pop-up Report
+        btnReport.addEventListener('click', (e) => {
+            e.stopPropagation(); // Mencegah klik menyebar ke document
+            popupReport.classList.toggle('hidden');
+            popupForm.classList.add('hidden'); // Menutup popup form jika sedang terbuka
+        });
+
+        // Menutup pop-up saat mengklik di luar area menu
+        document.addEventListener('click', (e) => {
+            if (!popupForm.contains(e.target) && e.target !== btnForm) {
+                popupForm.classList.add('hidden');
+            }
+            if (!popupReport.contains(e.target) && e.target !== btnReport) {
+                popupReport.classList.add('hidden');
+            }
         });
     </script>
     <script>
