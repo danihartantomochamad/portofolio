@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Bulanan</title>
     
-    <!-- Tailwind CSS CDN -->
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -15,235 +13,153 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/feather-icons"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Menggunakan font Inter sebagai default */
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        .bottom-nav-item { -webkit-tap-highlight-color: transparent; }
+
+        @media print {
+            body { background-color: #fff; padding-bottom: 0 !important; }
+            header, nav, footer, .print-hidden { display: none !important; }
+            main { padding: 0 !important; margin: 0 !important; }
+            .shadow-lg { box-shadow: none !important; }
+            .border { border: none !important; }
+            /* Memastikan chart ikut tercetak dengan ukuran yang pas */
+            #chart-wrapper { width: 300px !important; height: 300px !important; margin: 0 auto; }
         }
-        
-        /* Tambahan styling untuk bottom nav agar efek sentuhannya lebih rapi di HP */
-        .bottom-nav-item {
-            -webkit-tap-highlight-color: transparent;
-        }
-    </style>
-
-    <style>
-        body { font-family: 'Inter', sans-serif; margin: 2rem; background-color: #f9fafb; color: #111827; }
-      .container { max-width: 800px; margin: 0 auto; }
-      h1 { color: #1f2937; text-align: center; }
-      
-      /* Kontrol dan Tombol */
-      .controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: center; background-color: #fff; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-      .controls label { font-weight: 600; }
-      .controls input { padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-      .controls button { padding: 0.6rem 1.2rem; border: none; border-radius: 0.375rem; color: white; cursor: pointer; font-weight: 600; }
-      #generate-button { background-color: #2563eb; }
-      #print-button { background-color: #16a34a; }
-      .nav-link { display: block; text-align: center; margin-top: 1.5rem; color: #2563eb; text-decoration: none; }
-
-      /* Konten Laporan */
-      #report-content { background-color: #fff; padding: 2rem; border-radius: 0.5rem; display: none; }
-      #report-header h2 { margin: 0; text-align: center; }
-      #report-header p { margin: 0.25rem 0 2rem 0; text-align: center; color: #6b7280; }
-      
-      /* Box Summary */
-      #summary-container { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; }
-      .summary-box { padding: 1rem 1.5rem; border-radius: 0.5rem; text-align: center; border: 1px solid #e5e7eb; flex-grow: 1; }
-      .summary-box h3 { margin: 0 0 0.25rem 0; font-size: 0.9rem; font-weight: 600; color: #374151; }
-      .summary-box p { margin: 0; font-size: 1.75rem; font-weight: 600; color: #111827; }
-
-      /* Tabel Laporan */
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #e5e7eb; padding: 0.75rem 1rem; text-align: left; }
-      thead { background-color: #f3f4f6; }
-      th { font-weight: 600; }
-      
-      #status { text-align: center; font-size: 1.1rem; color: #6b7280; padding: 2rem; }
-
-      /* Style untuk Cetak */
-      @media print {
-        body { margin: 0; background-color: #fff; }
-        .controls, .nav-link { display: none; }
-        #report-content { display: block; box-shadow: none; border-radius: 0; padding: 0; }
-      }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen pb-20 md:pb-0 relative">
 
-    <!-- =========== Navbar =========== -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <!-- Logo atau Brand -->
                 <div class="text-2xl font-bold text-indigo-600">
-                    <a href="./index.html">Hello, Dani <i class="fa-brands fa-gratipay"></i>
-                    </a>
+                    <a href="./index.html">Hello, Dani <i class="fa-brands fa-gratipay"></i></a>
                 </div>
 
-                <!-- Menu untuk Desktop -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="./index.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Beranda</a>
-                    <a href="./form.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Form Pengeluaran</a>
-                    <a href="./form_undangan.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Form Undangan</a>
-                    <a href="./laporan.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Report</a>
-                    <a href="./display_all_data.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Display Data</a>
-                    <a href="./tentang.html" class="text-gray-600 hover:text-indigo-600 transition duration-300">Tentang</a>
-                    <!-- <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">Daftar</a> -->
+                    <a href="./index.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300"><i class="fa-solid fa-house mr-2"></i> Beranda</a>
+                    <a href="./form.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Form Pengeluaran</a>
+                    <a href="./form_undangan.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300"><i class="fa-solid fa-envelope-open-text mr-2"></i> Form Undangan</a>
+                    <a href="./laporan.html" class="flex items-center text-indigo-600 font-semibold transition duration-300"><i class="fa-solid fa-chart-bar mr-2"></i> Report</a>
+                    <a href="./display_all_data.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300"><i class="fa-solid fa-table mr-2"></i> Display Data</a>
+                    <a href="./tentang.html" class="flex items-center text-gray-600 hover:text-indigo-600 transition duration-300"><i class="fa-solid fa-circle-info mr-2"></i> Tentang</a>
                 </div>
-
-            </div>
-
-            <!-- Menu untuk Mobile (disembunyikan secara default) -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="./index.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Beranda</a>
-                <a href="./form.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Form Pengeluaran</a>
-                <a href="./form_undangan.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Form Undangan</a>
-                <a href="./laporan.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Report</a>
-                <a href="./display_all_data.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Display Data</a>
-                <a href="./tentang.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-indigo-50 rounded-md">Tentang</a>
-                <!-- <a href="#" class="block mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md text-center hover:bg-indigo-700 transition duration-300">Daftar</a> -->
             </div>
         </nav>
     </header>
 
-    <!-- =========== Content =========== -->
-    <main class="flex-grow container mx-auto px-2 py-12">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-12xl mx-auto">
-            <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Laporan Data Pengeluaran</h1>
-                    <p class="text-slate-500 mt-2">Pilih rentang tanggal untuk melihat total harga.</p>
-                </div>
+    <main class="flex-grow container mx-auto px-4 sm:px-6 py-8 md:py-12 w-full max-w-6xl">
+        <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-lg w-full border border-gray-100">
+            
+            <div class="text-center mb-8">
+                <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2">Laporan Data Pengeluaran</h1>
+                <p class="text-slate-500 text-sm md:text-base">Pilih rentang tanggal untuk melihat total pengeluaran dan grafik.</p>
+            </div>
 
-                <!-- Filter Section -->
-                <h1>Laporan Periodik</h1>
-
-                <div class="controls">
-                    <label for="startDate">Tanggal Mulai:</label>
-                    <input type="date" id="startDate" required>
-                    <label for="endDate">Tanggal Selesai:</label>
-                    <input type="date" id="endDate" required>
-                    <button id="generate-button">Buat Laporan</button>
-                    <button id="print-button" style="display: none;">Cetak</button>
-                </div>
-
-                <div id="status">Silakan pilih rentang tanggal dan klik "Buat Laporan".</div>
-
-                <div id="report-content">
-                    <div id="report-header"></div>
-                    <div id="summary-container"></div>
-                    <div id="table-container"></div>
-                </div>
+            <div class="print-hidden bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200 mb-8">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2"><i class="fa-regular fa-calendar mr-2"></i> Laporan Periodik</h2>
                 
-                <!-- Notification Area -->
-                <div id="notification" class="mt-4 text-center text-sm font-medium"></div>
+                <div class="flex flex-col md:flex-row gap-4 items-end">
+                    <div class="w-full md:flex-1">
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai:</label>
+                        <input type="date" id="startDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required>
+                    </div>
+                    <div class="w-full md:flex-1">
+                        <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai:</label>
+                        <input type="date" id="endDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required>
+                    </div>
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
+                        <button id="generate-button" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold transition duration-300 shadow-sm flex items-center justify-center">
+                            <i class="fa-solid fa-magnifying-glass mr-2"></i> Generate Report
+                        </button>
+                        <button id="print-button" class="hidden w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-semibold transition duration-300 shadow-sm items-center justify-center">
+                            <i class="fa-solid fa-print mr-2"></i> Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status" class="text-center text-gray-500 font-medium py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                <i class="fa-regular fa-folder-open text-3xl mb-2 block text-gray-400"></i>
+                Silakan pilih rentang tanggal dan klik "Buat Laporan".
+            </div>
+
+            <div id="report-content" class="hidden">
+                <div id="report-header" class="text-center mb-8"></div>
+                
+                <div id="summary-container"></div>
+                
+                <div id="chart-container" class="hidden mb-8 mt-4">
+                    <h3 class="text-lg font-bold text-center text-gray-800 mb-4">Pengeluaran Berdasarkan Kategori</h3>
+                    <div id="chart-wrapper" class="relative w-full max-w-sm mx-auto aspect-square">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="table-container"></div>
             </div>
         </div>
     </main>
 
-    <!-- =========== Footer =========== -->
-    <footer class="bg-gray-800 text-white">
+    <footer class="bg-gray-800 text-white print-hidden">
         <div class="container mx-auto px-6 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                 <p class="text-sm text-gray-400">&copy; 2025 DaniHartanto. Semua Hak Cipta Dilindungi.</p>
-                <div class="flex mt-4 md:mt-0 space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i data-feather="facebook" class="h-5 w-5"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i data-feather="twitter" class="h-5 w-5"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                        <i data-feather="instagram" class="h-5 w-5"></i>
-                    </a>
+                <div class="flex mt-4 md:mt-0 space-x-4 justify-center">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i data-feather="facebook" class="h-5 w-5"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i data-feather="twitter" class="h-5 w-5"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i data-feather="instagram" class="h-5 w-5"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 px-2 py-2 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <nav class="md:hidden print-hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 px-2 py-2 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <div class="flex justify-between items-center text-gray-500">
-            <a href="./index.html" class="bottom-nav-item flex flex-col items-center justify-center w-full text-indigo-600">
-                <i class="fa-solid fa-house text-xl mb-1"></i>
-                <span class="text-[10px] font-medium">Beranda</span>
+            <a href="./index.html" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] font-medium">Beranda</span>
             </a>
-            
             <div class="relative flex flex-col items-center justify-center w-full">
                 <button id="btn-form" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
-                    <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
-                    <span class="text-[10px] font-medium">Form</span>
+                    <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i><span class="text-[10px] font-medium">Form</span>
                 </button>
-                
-                <div id="popup-form" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
-                    <a href="./form.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
-                        <i class="fa-solid fa-file-pen mr-2 text-indigo-500"></i> Form Keuangan
-                    </a>
-                    <a href="./form_undangan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
-                        <i class="fa-solid fa-envelope-open-text mr-2 text-indigo-500"></i> Form Undangan
-                    </a>
+                <div id="popup-form" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-44 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./form.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center"><i class="fa-solid fa-file-pen mr-2 text-indigo-500"></i> Keuangan</a>
+                    <a href="./form_undangan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center"><i class="fa-solid fa-envelope-open-text mr-2 text-indigo-500"></i> Undangan</a>
                 </div>
             </div>
-            
             <div class="relative flex flex-col items-center justify-center w-full">
-                <button id="btn-report" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors focus:outline-none">
-                    <i class="fa-solid fa-chart-bar text-xl mb-1"></i>
-                    <span class="text-[10px] font-medium">Report</span>
+                <button id="btn-report" class="bottom-nav-item flex flex-col items-center justify-center w-full text-indigo-600 transition-colors focus:outline-none">
+                    <i class="fa-solid fa-chart-bar text-xl mb-1"></i><span class="text-[10px] font-medium">Report</span>
                 </button>
-                
-                <div id="popup-report" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-40 overflow-hidden z-50 transition-opacity duration-200">
-                    <a href="./laporan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center">
-                        <i class="fa-solid fa-chart-pie mr-2 text-green-500"></i> Report Data
-                    </a>
-                    <a href="./display_all_data.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center">
-                        <i class="fa-solid fa-table-list mr-2 text-green-500"></i> Report All Data
-                    </a>
+                <div id="popup-report" class="hidden absolute bottom-14 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-100 w-44 overflow-hidden z-50 transition-opacity duration-200">
+                    <a href="./laporan.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 border-b border-gray-100 flex items-center"><i class="fa-solid fa-chart-pie mr-2 text-green-500"></i> Report Data</a>
+                    <a href="./display_all_data.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 flex items-center"><i class="fa-solid fa-table-list mr-2 text-green-500"></i> All Data</a>
                 </div>
             </div>
-            
             <a href="./tentang.html" class="bottom-nav-item flex flex-col items-center justify-center w-full hover:text-indigo-600 transition-colors">
-                <i class="fa-solid fa-circle-info text-xl mb-1"></i>
-                <span class="text-[10px] font-medium">Tentang</span>
+                <i class="fa-solid fa-circle-info text-xl mb-1"></i><span class="text-[10px] font-medium">Tentang</span>
             </a>
         </div>
     </nav>
+
     <script>
-        // Inisialisasi Feather Icons
         feather.replace();
-
-        // LOGIKA POP-UP BOTTOM NAVIGATION
-        const btnForm = document.getElementById('btn-form');
-        const popupForm = document.getElementById('popup-form');
-        
-        const btnReport = document.getElementById('btn-report');
-        const popupReport = document.getElementById('popup-report');
-
-        // Fungsi toggle Pop-up Form
-        btnForm.addEventListener('click', (e) => {
-            e.stopPropagation(); // Mencegah klik menyebar ke document
-            popupForm.classList.toggle('hidden');
-            popupReport.classList.add('hidden'); // Menutup popup report jika sedang terbuka
-        });
-
-        // Fungsi toggle Pop-up Report
-        btnReport.addEventListener('click', (e) => {
-            e.stopPropagation(); // Mencegah klik menyebar ke document
-            popupReport.classList.toggle('hidden');
-            popupForm.classList.add('hidden'); // Menutup popup form jika sedang terbuka
-        });
-
-        // Menutup pop-up saat mengklik di luar area menu
+        const btnForm = document.getElementById('btn-form'), popupForm = document.getElementById('popup-form');
+        const btnReport = document.getElementById('btn-report'), popupReport = document.getElementById('popup-report');
+        btnForm.addEventListener('click', (e) => { e.stopPropagation(); popupForm.classList.toggle('hidden'); popupReport.classList.add('hidden'); });
+        btnReport.addEventListener('click', (e) => { e.stopPropagation(); popupReport.classList.toggle('hidden'); popupForm.classList.add('hidden'); });
         document.addEventListener('click', (e) => {
-            if (!popupForm.contains(e.target) && e.target !== btnForm) {
-                popupForm.classList.add('hidden');
-            }
-            if (!popupReport.contains(e.target) && e.target !== btnReport) {
-                popupReport.classList.add('hidden');
-            }
+            if (!popupForm.contains(e.target) && e.target !== btnForm) popupForm.classList.add('hidden');
+            if (!popupReport.contains(e.target) && e.target !== btnReport) popupReport.classList.add('hidden');
         });
     </script>
+    
     <script>
-        // !!! PASTIKAN URL INI SAMA DENGAN YANG ADA DI index.html !!!
         const API_URL = "https://script.google.com/macros/s/AKfycbz68Tie0l1W6ZC4UYVE_z0xV3V212lwWnMyyNdNmjE5lQH_ePrrKvmrtVOgiB0aDV8/exec";
 
         const generateButton = document.getElementById('generate-button');
@@ -251,109 +167,195 @@
         const reportContent = document.getElementById('report-content');
         const statusDiv = document.getElementById('status');
         
+        // Variabel global untuk menyimpan instance chart
+        let myPieChart = null;
+
         generateButton.addEventListener('click', function() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
 
             if (!startDate || !endDate) {
-                statusDiv.textContent = 'Harap isi tanggal mulai dan tanggal selesai.';
-                statusDiv.style.color = 'red';
+                statusDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500 text-3xl mb-2 block"></i> Harap isi tanggal mulai dan tanggal selesai.';
+                statusDiv.className = "text-center text-red-500 font-medium py-8 bg-red-50 rounded-lg border border-dashed border-red-300";
                 return;
             }
 
-            statusDiv.textContent = 'Mengambil data laporan...';
-            statusDiv.style.color = '#6b7280';
-            reportContent.style.display = 'none';
-            printButton.style.display = 'none';
+            statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-3xl mb-2 block text-indigo-500"></i> Mengambil data laporan...';
+            statusDiv.className = "text-center text-gray-500 font-medium py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300";
+            
+            reportContent.classList.add('hidden');
+            printButton.classList.add('hidden');
+            printButton.classList.remove('flex'); 
 
             const params = new URLSearchParams({ startDate, endDate });
-            const fullUrl = `${API_URL}?${params.toString()}`;
-
-            fetch(fullUrl)
+            fetch(`${API_URL}?${params.toString()}`)
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return response.json();
                 })
                 .then(data => buildReport(data, startDate, endDate))
                 .catch(error => {
-                    statusDiv.textContent = `Gagal memuat data: ${error.message}`;
-                    statusDiv.style.color = 'red';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl mb-2 block"></i> Gagal memuat data: ${error.message}`;
+                    statusDiv.className = "text-center text-red-500 font-medium py-8 bg-red-50 rounded-lg border border-dashed border-red-300";
                 });
         });
         
-        printButton.addEventListener('click', () => {
-            window.print();
-        });
+        printButton.addEventListener('click', () => { window.print(); });
 
         function buildReport(data, startDate, endDate) {
             if (data.error) {
-                statusDiv.textContent = `Gagal: ${data.error}`;
-                statusDiv.style.color = 'red';
+                statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl mb-2 block"></i> Gagal: ${data.error}`;
+                statusDiv.className = "text-center text-red-500 font-medium py-8 bg-red-50 rounded-lg border border-dashed border-red-300";
                 return;
             }
             if (!data || data.length === 0) {
-                statusDiv.textContent = 'Tidak ada data ditemukan untuk periode yang dipilih.';
+                statusDiv.innerHTML = '<i class="fa-regular fa-folder-open text-3xl mb-2 block text-gray-400"></i> Tidak ada data ditemukan untuk periode yang dipilih.';
+                statusDiv.className = "text-center text-gray-500 font-medium py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300";
                 return;
             }
 
-            statusDiv.style.display = 'none';
-            reportContent.style.display = 'block';
-            printButton.style.display = 'inline-block';
+            statusDiv.classList.add('hidden');
+            reportContent.classList.remove('hidden');
+            printButton.classList.remove('hidden');
+            printButton.classList.add('flex');
 
-            // 1. Buat Header Laporan
+            // 1. Buat Header
             const reportHeader = document.getElementById('report-header');
             const formattedStart = new Date(startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             const formattedEnd = new Date(endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             reportHeader.innerHTML = `
-                <h2>Laporan Transaksi</h2>
-                <p>Periode: ${formattedStart} - ${formattedEnd}</p>
+                <h2 class="text-2xl font-bold text-gray-800">Laporan Transaksi Keuangan</h2>
+                <p class="text-gray-500 mt-1">Periode: <span class="font-semibold text-gray-700">${formattedStart}</span> s/d <span class="font-semibold text-gray-700">${formattedEnd}</span></p>
             `;
 
-            // 2. Kalkulasi dan Buat Summary
-            const summaryContainer = document.getElementById('summary-container');
+            // 2. Analisis Data & Header
             const headers = Object.keys(data[0]);
             let totalHarga = 0;
             let totalJumlah = 0;
-            const hargaHeader = headers.find(h => h.toLowerCase() === 'harga');
-            const jumlahHeader = headers.find(h => h.toLowerCase() === 'jumlah');
+            
+            // Mencari Header yang cocok dengan kata kunci
+            const hargaHeader = headers.find(h => h.toLowerCase() === 'harga' || h.toLowerCase().includes('total'));
+            const jumlahHeader = headers.find(h => h.toLowerCase() === 'jumlah' || h.toLowerCase() === 'qty');
+            // Menemukan header kolom Kategori (misal namanya: Kategori, Category, Jenis, dll)
+            const kategoriHeader = headers.find(h => h.toLowerCase().includes('kategori') || h.toLowerCase().includes('jenis'));
+
+            const kategoriTotals = {}; // Objek penyimpan total harga tiap kategori
 
             data.forEach(row => {
+                let currentHarga = 0;
                 if (hargaHeader) {
-                    const harga = parseFloat(String(row[hargaHeader]).replace(/[^0-9,-]+/g, ""));
-                    if (!isNaN(harga)) totalHarga += harga;
+                    currentHarga = parseFloat(String(row[hargaHeader]).replace(/[^0-9,-]+/g, ""));
+                    if (!isNaN(currentHarga)) totalHarga += currentHarga;
                 }
+                
                 if (jumlahHeader) {
-                    const jumlah = parseInt(String(row[jumlahHeader]).replace(/[^0-g]+/g, ""), 10);
+                    const jumlah = parseInt(String(row[jumlahHeader]).replace(/[^0-9]+/g, ""), 10);
                     if (!isNaN(jumlah)) totalJumlah += jumlah;
+                }
+
+                // Kalkulasi Pie Chart: Tambahkan harga ke kategori terkait
+                if (kategoriHeader && hargaHeader && !isNaN(currentHarga)) {
+                    let kategoriStr = row[kategoriHeader] || 'Lainnya';
+                    if (!kategoriTotals[kategoriStr]) kategoriTotals[kategoriStr] = 0;
+                    kategoriTotals[kategoriStr] += currentHarga;
                 }
             });
             
+            // 3. Render Box Summary
+            const summaryContainer = document.getElementById('summary-container');
             summaryContainer.innerHTML = `
-                <div class="summary-box">
-                    <h3>Total Transaksi</h3>
-                    <p>${data.length}</p>
-                </div>
-                <div class="summary-box">
-                    <h3>Total Jumlah Item</h3>
-                    <p>${new Intl.NumberFormat('id-ID').format(totalJumlah)}</p>
-                </div>
-                <div class="summary-box">
-                    <h3>Total Pengeluaran</h3>
-                    <p>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalHarga)}</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 border border-blue-100 p-5 rounded-xl text-center">
+                        <h3 class="text-blue-600 font-semibold text-sm uppercase tracking-wider mb-1">Total Transaksi</h3>
+                        <p class="text-3xl font-bold text-blue-900">${data.length}</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-5 rounded-xl text-center">
+                        <h3 class="text-amber-600 font-semibold text-sm uppercase tracking-wider mb-1">Total Item</h3>
+                        <p class="text-3xl font-bold text-amber-900">${new Intl.NumberFormat('id-ID').format(totalJumlah)}</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-100 p-5 rounded-xl text-center">
+                        <h3 class="text-green-600 font-semibold text-sm uppercase tracking-wider mb-1">Total Pengeluaran</h3>
+                        <p class="text-3xl font-bold text-green-900">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalHarga)}</p>
+                    </div>
                 </div>
             `;
 
-            // 3. Buat Tabel Detail
+            // 4. Render Pie Chart (Jika Ada Data Kategori)
+            const chartContainer = document.getElementById('chart-container');
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            // Hapus chart lama jika sebelumnya sudah di-generate
+            if (myPieChart) { myPieChart.destroy(); }
+
+            if (Object.keys(kategoriTotals).length > 0) {
+                chartContainer.classList.remove('hidden');
+                
+                const labelKategori = Object.keys(kategoriTotals);
+                const dataKategori = Object.values(kategoriTotals);
+                
+                // Warna-warni aesthetic untuk chart
+                const warnaKategori = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#64748B'];
+
+                myPieChart = new Chart(ctx, {
+                    type: 'doughnut', // 'pie' atau 'doughnut'
+                    data: {
+                        labels: labelKategori,
+                        datasets: [{
+                            data: dataKategori,
+                            backgroundColor: warnaKategori.slice(0, labelKategori.length),
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { padding: 20, font: { family: "'Inter', sans-serif" } }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    // Memformat angka tooltip menjadi Rupiah
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed !== null) {
+                                            label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(context.parsed);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                chartContainer.classList.add('hidden'); // Sembunyikan jika sheet tidak punya kolom kategori
+            }
+
+            // 5. Render Tabel Data
             const tableContainer = document.getElementById('table-container');
-            let table = '<table><thead><tr>';
-            headers.forEach(header => { table += `<th>${header}</th>`; });
-            table += '</tr></thead><tbody>';
-            data.forEach(row => {
-                table += '<tr>';
-                headers.forEach(header => { table += `<td>${row[header]}</td>`; });
+            let table = `
+                <div class="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm mt-4">
+                    <table class="min-w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+            `;
+            
+            headers.forEach(header => { table += `<th class="px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider">${header}</th>`; });
+            table += '</tr></thead><tbody class="divide-y divide-gray-100">';
+            
+            data.forEach((row, index) => {
+                const bgClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50';
+                table += `<tr class="${bgClass} hover:bg-indigo-50 transition-colors">`;
+                headers.forEach(header => { table += `<td class="px-6 py-4 text-gray-700">${row[header]}</td>`; });
                 table += '</tr>';
             });
-            table += '</tbody></table>';
+            
+            table += '</tbody></table></div>';
             tableContainer.innerHTML = table;
         }
     </script>
